@@ -27,7 +27,8 @@ export async function criarDemanda(data: any, token: string) {
         envioCobranca2: data.envioCobranca2,
         envioParaResponsavel: data.envioParaResponsavel,
         observacoes: data.observacoes,
-        solicitantId: data.solicitantId
+        solicitantId: data.solicitantId,
+        indicadoPor: data.indicadoPor
       })
     })
 
