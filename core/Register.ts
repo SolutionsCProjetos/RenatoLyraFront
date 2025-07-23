@@ -16,6 +16,8 @@ export interface SolicitanteData {
   zona?: string
   pontoReferencia?: string
   secaoEleitoral?: string
+  indicadoPor: string;
+  meio: string;
 }
 
 // Tipos para as respostas
