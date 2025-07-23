@@ -70,6 +70,10 @@ export default function ListaSolicitante() {
     await fetchSolicitantes() // Recarrega os dados atualizados
   }
 
+  const handleNew = () => {
+      window.location.href = "/novo-solicitante";
+  }
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md">
       <div className="flex justify-between items-center mb-6">
