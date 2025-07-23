@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { loginSolicitante } from './action'
+import Image from 'next/image';
+import Logo from '../../assets/img/LogoN.png';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -53,7 +55,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#b5e4f1] px-4">
       <div className="bg-white shadow-md rounded-xl w-full max-w-md p-8">
-        <h2 className="text-2xl font-bold text-center mb-6 text-[#007cb2]">Entrar</h2>
+        <div className="flex justify-center mb-4">
+      <Image src={Logo} alt="Renato Lyra" width={200} height={150} className="rounded-full" />
+    </div>
+    <h2 className="text-2xl font-bold text-center mb-6 text-[#007cb2]">Entrar</h2>
 
         <div className="mb-4">
           <label className="block mb-1 text-gray-700">Email ou CPF</label>
