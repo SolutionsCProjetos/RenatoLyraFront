@@ -31,8 +31,7 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     envioCobranca2: '',
     envioParaResponsavel: '',
     observacoes: '',
-    solicitantId: null,
-    indicadoPor: '' // Adicionado o novo campo
+    solicitantId: null
   })
 
   function getCurrentDate() {
@@ -79,8 +78,7 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
         envioCobranca2: editData.envioCobranca2 || '',
         envioParaResponsavel: editData.envioParaResponsavel || '',
         observacoes: editData.observacoes || '',
-        solicitantId: editData.solicitanteId,
-        indicadoPor: editData.solicitantes?.indicadoPor || '' // Adicionado para edição
+        solicitantId: editData.solicitanteId
       })
       setObs(editData.observacoes || '')
     } else {
@@ -138,7 +136,6 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
             : form.status === 'Concluída'
               ? 'Conclu_da'
               : form.status,
-        indicadoPor: form.indicadoPor // Incluído no payload
       }
       await registrarDemanda(payload, token, isAdmin)
 
@@ -244,11 +241,6 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
               ) : (
                 renderInput('solicitant', form.solicitant, 'text', false, true)
               )}
-            </div>
-            {/* Adicionado o novo campo Indicado Por */}
-            <div>
-              <label className="text-sm font-medium block mb-1">Indicado Por:</label>
-              {renderInput('indicadoPor', form.indicadoPor, 'text')}
             </div>
           </div>
         </div>
