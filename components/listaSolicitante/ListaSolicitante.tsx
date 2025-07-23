@@ -104,6 +104,14 @@ export default function ListaSolicitante() {
             >
               Limpar
             </button>
+            {isAdmin && (
+            <button
+              onClick={handleNew}
+              className="bg-[#007cb2] text-white px-6 py-2 rounded hover:bg-[#00689c] transition"
+            >
+             Novo Solicitante
+            </button>
+             )}
           </div>
 
           <div className="overflow-x-auto">
