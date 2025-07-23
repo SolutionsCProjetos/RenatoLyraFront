@@ -64,8 +64,13 @@ export default function RegistroPage() {
     zona: '',
     pontoReferencia: '',
     secao: '',
-    senha: ''
+    senha: '',
+    indicadoPor: '',
+    meio: ''
   });
+
+  console.log('📤 Enviando para API:', form);
+
 
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -106,7 +111,13 @@ export default function RegistroPage() {
   };
 
   const handleSubmit = async () => {
-    const camposObrigatorios = Object.entries(form).filter(([_, valor]) => !valor.trim());
+    const camposObrigatorios = Object.entries(form)
+      .filter(([campo, valor]) =>
+        campo !== 'indicadoPor' &&
+        campo !== 'meio' &&
+        !valor.trim()
+      );
+
     if (camposObrigatorios.length > 0) {
       const nomesCampos = camposObrigatorios.map(([campo]) => campo);
       setErrors(nomesCampos);
@@ -140,8 +151,11 @@ export default function RegistroPage() {
         zona: form.zona,
         pontoReferencia: form.pontoReferencia,
         secaoEleitoral: form.secao,
-        senha: form.senha
+        senha: form.senha,
+        indicadoPor: form.indicadoPor,
+        meio: form.meio
       });
+
 
       window.location.href = "/";
     } catch (err) {
@@ -158,6 +172,7 @@ export default function RegistroPage() {
 
         <div className="mb-4">
           <h3 className="font-semibold mb-2">Dados Pessoal</h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium">*Nome completo:</label>
@@ -193,7 +208,7 @@ export default function RegistroPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium">Seção Eleitoral:</label>
+              <label className="text-sm font-medium">*Seção Eleitoral:</label>
               <input
                 type="text"
                 name="secao"
@@ -213,9 +228,12 @@ export default function RegistroPage() {
                 className={`w-full border ${isError('telefone') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
               />
             </div>
+          </div>
 
+          {/* Linha separada com Email e Senha lado a lado */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="text-sm font-medium">*E-mail:</label>
+              <label className="text-sm font-bold">*Digite Seu E-mail:</label>
               <input
                 type="text"
                 name="email"
@@ -226,7 +244,7 @@ export default function RegistroPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium">*Senha:</label>
+              <label className="text-sm font-bold">*Crie Sua Senha:</label>
               <input
                 type="password"
                 name="senha"
@@ -237,7 +255,41 @@ export default function RegistroPage() {
             </div>
           </div>
 
+          {/* Linha com Indicado por quem e Meio */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div>
+              <label className="text-sm font-medium">Indicado por quem:</label>
+              <input
+                type="text"
+                name="indicadoPor"
+                value={form.indicadoPor}
+                onChange={handleChange}
+                className={`w-full border ${isError('indicadoPor') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
+              />
+            </div>
+
+            <div className="relative">
+              <label className="text-sm font-medium">*Por qual meio:</label>
+              <select
+                name="meio"
+                value={form.meio}
+                onChange={handleChange}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                className={`w-full appearance-none border ${isError('meio') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 pr-10 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
+              >
+                <option value="">Selecione</option>
+                <option value="Instagram">Instagram</option>
+                <option value="WhatsApp">WhatsApp</option>
+              </select>
+              <FaChevronDown
+                className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${focused || form.meio ? 'rotate-180' : ''}`}
+                size={14}
+              />
+            </div>
+          </div>
         </div>
+
 
         <div className="mb-4">
           <h3 className="font-semibold mb-2">Endereço</h3>
@@ -247,7 +299,7 @@ export default function RegistroPage() {
               ['Endereço:', 'endereco'],
               ['Número:', 'numero'],
               ['Bairro:', 'bairro'],
-              ['Ponto Referência:', 'pontoReferencia']
+              ['Ponto Referência:', 'pontoReferencia'],
             ].map(([label, name]) => (
               <div key={name}>
                 <label className="text-sm font-medium">{label}</label>
@@ -261,7 +313,7 @@ export default function RegistroPage() {
             ))}
 
             <div className="relative">
-              <label className="text-sm font-medium">Zona:</label>
+              <label className="text-sm font-medium">*Zona:</label>
               <select
                 name="zona"
                 value={form.zona}
