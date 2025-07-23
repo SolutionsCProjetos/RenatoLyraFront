@@ -267,6 +267,7 @@ export default function ListaDemandas() {
               <th className="px-4 py-3">Protocolo</th>
               <th className="px-4 py-3">Nome</th>
               <th className="px-4 py-3">Contato</th>
+              <th className="px-4 py-3">Indicado Por</th>
               <th className="px-4 py-3">Prioridade</th>
               <th className="px-4 py-3">Data Solicitação</th>
               <th className="px-4 py-3 text-center">Ações</th>
@@ -278,6 +279,7 @@ export default function ListaDemandas() {
                 <td className="px-4 py-3 text-gray-700">{StatusDemandaEnum[item.status] || item.status}</td>
                 <td className="px-4 py-3 text-gray-700">{item.protocolo}</td>
                 <td className="px-4 py-3 text-gray-800 font-medium">{item.solicitantes?.nomeCompleto || '-'}</td>
+                <td className="px-4 py-3 text-gray-800 font-medium">{item.solicitantes?.indicadoPor || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.solicitantes?.telefoneContato || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.prioridade}</td>
                 <td className="px-4 py-3 text-gray-700">{item.dataSolicitacao ? new Date(item.dataSolicitacao).toLocaleDateString('pt-BR') : '-'}</td>
