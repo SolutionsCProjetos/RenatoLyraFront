@@ -266,8 +266,8 @@ export default function ListaDemandas() {
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Protocolo</th>
               <th className="px-4 py-3">Nome</th>
-              <th className="px-4 py-3">Contato</th>
               <th className="px-4 py-3">Indicado Por</th>
+              <th className="px-4 py-3">Contato</th>
               <th className="px-4 py-3">Prioridade</th>
               <th className="px-4 py-3">Data Solicitação</th>
               <th className="px-4 py-3 text-center">Ações</th>
