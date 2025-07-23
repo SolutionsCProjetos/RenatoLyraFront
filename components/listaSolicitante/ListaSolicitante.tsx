@@ -12,6 +12,7 @@ interface ISolicitante {
   nomeCompleto?: string
   telefoneContato?: string
   titulo?: string
+  zona?: string
 }
 
 export default function ListaSolicitante() {
@@ -126,6 +127,7 @@ export default function ListaSolicitante() {
                   <th className="px-4 py-2 text-left">Solicitante</th>
                   <th className="px-4 py-2 text-left">Nome</th>
                   <th className="px-4 py-2 text-left">Contato</th>
+                  <th className="px-4 py-2 text-left">Zona</th>
                   <th className="px-4 py-2 text-left">Título</th>
                   <th className="px-4 py-2 text-center">Ações</th>
                 </tr>
@@ -137,6 +139,7 @@ export default function ListaSolicitante() {
                     <td className="px-4 py-2">{item.solicitante}</td>
                     <td className="px-4 py-2">{item.nomeCompleto}</td>
                     <td className="px-4 py-2">{item.telefoneContato}</td>
+                    <td className="px-4 py-2">{item.zona}</td>
                     <td className="px-4 py-2">{item.titulo}</td>
                     <td className="px-4 py-2 text-center">
                       <button
