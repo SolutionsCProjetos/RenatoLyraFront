@@ -34,29 +34,14 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     solicitantId: null
   })
 
-  // function getCurrentDate() {
-  //   const today = new Date().toLocaleDateString('pt-BR', {
-  //     timeZone: 'America/Sao_Paulo',
-  //   })
-  //   const [day, month, year] = today.split('/')
-  //   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-  // }
-
   function getCurrentDate() {
-  const today = new Date()
+    const today = new Date().toLocaleDateString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+    })
+    const [day, month, year] = today.split('/')
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+  }
 
-  // Subtrair 1 dia
-  today.setDate(today.getDate() - 1)
-
-  // Ajustar fuso horário
-  const todayInBrazil = new Date(today.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
-  
-  const year = todayInBrazil.getFullYear()
-  const month = String(todayInBrazil.getMonth() + 1).padStart(2, '0')
-  const day = String(todayInBrazil.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
-}
 
 
   function formatToLocalDate(isoDate: string) {
