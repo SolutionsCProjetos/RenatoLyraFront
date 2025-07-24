@@ -112,6 +112,22 @@ export default function ListaDemandas() {
     }
   }
 
+    // Função para formatar corretamente a data para exibição
+function formatarDataParaExibicao(dataISO: string) {
+  if (!dataISO) return '';
+  
+  // Cria a data no fuso horário de Brasília
+  const data = new Date(dataISO);
+  const dataBrasilia = new Date(data.getTime() + (3 * 60 * 60 * 1000)); // Ajuste para UTC-3
+  
+  return dataBrasilia.toLocaleDateString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
   const exportToExcel = () => {
     const dataToExport = filteredData.map(item => ({
       Protocolo: item.protocolo,
@@ -283,7 +299,7 @@ export default function ListaDemandas() {
                 <td className="px-4 py-3 text-gray-800 font-medium">{item.solicitantes?.indicadoPor || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.solicitantes?.telefoneContato || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.prioridade}</td>
-                <td className="px-4 py-3 text-gray-700">{item.dataSolicitacao ? new Date(item.dataSolicitacao).toLocaleDateString('pt-BR') : '-'}</td>
+                <td className="px-4 py-3 text-gray-700">{item.dataSolicitacao ? formatarDataParaExibicao(item.dataSolicitacao) : '-'}</td>
                 <td className="px-4 py-3 text-center space-x-3">
                   <button
                     className="text-[#007cb2] hover:underline"
