@@ -44,14 +44,27 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
 
 
 
-  function formatToLocalDate(isoDate: string) {
-    if (!isoDate) return ''
-    const date = new Date(isoDate)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+function formatToLocalDate(isoDate: string) {
+  if (!isoDate) return '';
+  
+  // Se já está no formato YYYY-MM-DD, retorna sem alteração
+  if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+    return isoDate;
   }
+
+  // Para strings ISO completas (com timezone)
+  const date = new Date(isoDate);
+  
+  // Corrige para o fuso horário local
+  const offset = date.getTimezoneOffset();
+  date.setMinutes(date.getMinutes() + offset);
+  
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+}
 
   const token = getToken()
   if (!token) {
@@ -129,16 +142,17 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     try {
       const protocolo = await getProximoProtocolo(token)
       const payload = {
-        ...form,
-        protocolo,
-        id: editData?.id || null,
-        status:
-          form.status === 'Aguardando Retorno'
-            ? 'Aguardando_Retorno'
-            : form.status === 'Concluída'
-              ? 'Conclu_da'
-              : form.status,
-      }
+      ...form,
+      protocolo,
+      id: editData?.id || null,
+      dataSolicitacao: form.dataSolicitacao ? `${form.dataSolicitacao}T00:00:00` : null,
+      dataTermino: form.dataTermino ? `${form.dataTermino}T00:00:00` : null,
+      status: form.status === 'Aguardando Retorno' 
+        ? 'Aguardando_Retorno' 
+        : form.status === 'Concluída' 
+          ? 'Conclu_da' 
+          : form.status,
+    };
       await registrarDemanda(payload, token, isAdmin)
 
       if (onDemandaCadastrada) {
