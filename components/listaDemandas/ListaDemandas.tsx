@@ -191,10 +191,15 @@ function formatarDataParaExibicao(dataISO: string) {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-[#17686f] mb-6">Lista de Demandas</h2>
         {isAdmin2 && (
-          <span className="text-xs px-3 py-1 bg-green-100 text-green-700 border border-green-400 rounded-full">
-            Administrador
-          </span>
-        )}
+      <div className="flex items-center gap-2">
+        <span className="text-xs px-3 py-1 bg-green-100 text-green-700 border border-green-400 rounded-full">
+          Administrador
+        </span>
+        <span className="text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
+          Total De Demandas: {allData.length}
+        </span>
+      </div>
+    )}
       </div>
 
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
