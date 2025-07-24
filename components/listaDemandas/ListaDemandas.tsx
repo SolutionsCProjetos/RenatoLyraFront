@@ -52,7 +52,6 @@ export default function ListaDemandas() {
       setIsAdmin(isAdmin)
       const res = await getTodasDemandas(id, isAdmin, token)
       setAllData(res)
-      console.log(res)
       setFilteredData(res)
     } catch (err) {
       alert('Erro ao carregar demandas')
