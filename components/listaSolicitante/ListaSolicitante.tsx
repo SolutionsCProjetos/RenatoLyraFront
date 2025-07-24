@@ -82,10 +82,15 @@ export default function ListaSolicitante() {
           Lista de Solicitantes
         </h2>
         {isAdmin && (
-          <span className="text-xs px-3 py-1 bg-green-100 text-green-700 border border-green-400 rounded-full">
-            Administrador
-          </span>
-        )}
+      <div className="flex items-center gap-2">
+        <span className="text-xs px-3 py-1 bg-green-100 text-green-700 border border-green-400 rounded-full">
+          Administrador
+        </span>
+        <span className="text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
+          Total De Solicitantes: {data.length}
+        </span>
+      </div>
+    )}
       </div>
 
       {selectedItem ? (
