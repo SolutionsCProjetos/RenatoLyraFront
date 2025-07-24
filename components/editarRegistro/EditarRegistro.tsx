@@ -54,7 +54,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     bairro: '',
     zona: '',
     pontoReferencia: '',
-    secao: ''
+    secao: '',
+    indicadoPor: ''
   })
 
   useEffect(() => {
@@ -71,7 +72,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
         bairro: item.bairro || '',
         zona: item.zona || '',
         pontoReferencia: item.pontoReferencia || '',
-        secao: item.secaoEleitoral || ''
+        secao: item.secaoEleitoral || '',
+        indicadoPor: item.indicadoPor || ''
       })
     }
   }, [item])
@@ -123,10 +125,10 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       return
     }
 
-    if (!isValidCPF(form.cpf)) {
-      alert('CPF inválido.')
-      return
-    }
+    // if (!isValidCPF(form.cpf)) {
+    //   alert('CPF inválido.')
+    //   return
+    // }
 
     setErrors([])
 
@@ -142,7 +144,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       bairro: form.bairro,
       zona: form.zona,
       pontoReferencia: form.pontoReferencia,
-      secaoEleitoral: form.secao
+      secaoEleitoral: form.secao,
+      indicadoPor:form.indicadoPor
     }
 
     try {
@@ -162,7 +165,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Título de Eleitor:', 'titulo'],
     ['*Telefone:', 'telefone'],
     ['*E-mail:', 'email'],
-    ['Seção Eleitoral:', 'secao']
+    ['Seção Eleitoral:', 'secao',],
+    ['Indicado Por:', 'indicadoPor']
   ] as const
 
   const camposEndereco = [
