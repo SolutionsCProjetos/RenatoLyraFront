@@ -13,6 +13,7 @@ interface ISolicitante {
   telefoneContato?: string
   titulo?: string
   zona?: string
+  indicadoPor?: string
 }
 
 export default function ListaSolicitante() {
