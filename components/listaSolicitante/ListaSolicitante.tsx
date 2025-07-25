@@ -141,7 +141,7 @@ export default function ListaSolicitante() {
                 {paginatedData.map(item => (
                   <tr key={item.id} className="even:bg-[#c4f9ff]">
                     <td className="px-4 py-2">{item.id}</td>
-                    <td className="px-4 py-2">{item.solicitante } || { item.indicadoPor }</td>
+                    <td className="px-4 py-2">{item.solicitante || item.indicadoPor || '-'}</td>
                     <td className="px-4 py-2">{item.nomeCompleto}</td>
                     <td className="px-4 py-2">{item.telefoneContato}</td>
                     <td className="px-4 py-2">{item.zona}</td>
