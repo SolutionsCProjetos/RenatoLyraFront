@@ -141,18 +141,36 @@ function formatToLocalDate(isoDate: string) {
   const handleSubmit = async () => {
     try {
       const protocolo = await getProximoProtocolo(token)
+    //   const payload = {
+    //   ...form,
+    //   protocolo,
+    //   id: editData?.id || null,
+    //   dataSolicitacao: form.dataSolicitacao ? `${form.dataSolicitacao}T00:00:00` : null,
+    //   dataTermino: form.dataTermino ? `${form.dataTermino}T00:00:00` : null,
+    //   status: form.status === 'Aguardando Retorno' 
+    //     ? 'Aguardando_Retorno' 
+    //     : form.status === 'Concluída' 
+    //       ? 'Conclu_da' 
+    //       : form.status,
+    // };
       const payload = {
-      ...form,
-      protocolo,
-      id: editData?.id || null,
-      dataSolicitacao: form.dataSolicitacao ? `${form.dataSolicitacao}T00:00:00` : null,
-      dataTermino: form.dataTermino ? `${form.dataTermino}T00:00:00` : null,
-      status: form.status === 'Aguardando Retorno' 
-        ? 'Aguardando_Retorno' 
-        : form.status === 'Concluída' 
-          ? 'Conclu_da' 
-          : form.status,
-    };
+  ...form,
+  protocolo,
+  id: editData?.id || null,
+  dataSolicitacao: form.dataSolicitacao && !isNaN(Date.parse(form.dataSolicitacao))
+    ? `${form.dataSolicitacao}T00:00:00`
+    : null,
+  dataTermino: form.dataTermino && !isNaN(Date.parse(form.dataTermino))
+    ? `${form.dataTermino}T00:00:00`
+    : null,
+  status:
+    form.status === 'Aguardando Retorno'
+      ? 'Aguardando_Retorno'
+      : form.status === 'Concluída'
+        ? 'Conclu_da'
+        : form.status,
+}
+
       await registrarDemanda(payload, token, isAdmin)
 
       if (onDemandaCadastrada) {
