@@ -67,10 +67,11 @@ export default function RegistroPage() {
     secao: '',
     senha: '',
     indicadoPor: '',
-    meio: ''
+    meio: '',
+    zonaEleitoral: ''
   });
 
-  console.log('📤 Enviando para API:', form);
+  // console.log('📤 Enviando para API:', form);
 
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -187,7 +188,8 @@ export default function RegistroPage() {
         secaoEleitoral: form.secao,
         senha: form.senha,
         indicadoPor: form.indicadoPor,
-        meio: form.meio
+        meio: form.meio,
+        zonaEleitoral: form.zonaEleitoral
       });
 
 
@@ -338,6 +340,7 @@ export default function RegistroPage() {
               ['Número:', 'numero'],
               ['Bairro:', 'bairro'],
               ['Ponto Referência:', 'pontoReferencia'],
+              ['Zona eleitoral:', 'zonaEleitoral']
             ].map(([label, name]) => (
               <div key={name}>
                 <label className="text-sm font-medium">{label}</label>
@@ -391,3 +394,4 @@ export default function RegistroPage() {
     </div>
   );
 }
+
