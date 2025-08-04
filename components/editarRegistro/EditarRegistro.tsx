@@ -75,7 +75,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
         pontoReferencia: item.pontoReferencia || '',
         secao: item.secaoEleitoral || '',
         indicadoPor: item.indicadoPor || '',
-        zonaEleitoral: form.zonaEleitoral
+        zonaEleitoral: item.zonaEleitoral
       })
     }
   }, [item])
@@ -259,5 +259,6 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     </div>
   )
 }
+
 
 
