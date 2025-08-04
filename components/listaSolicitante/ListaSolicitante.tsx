@@ -159,7 +159,7 @@ export default function ListaSolicitante() {
                 ))}
                 {paginatedData.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="text-center text-gray-500 py-4">
+                    <td colSpan={7} className="text-center text-gray-500 py-4">
                       Nenhum registro encontrado
                     </td>
                   </tr>
@@ -192,3 +192,4 @@ export default function ListaSolicitante() {
     </div>
   )
 }
+
