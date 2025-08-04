@@ -177,7 +177,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Endereço:', 'endereco'],
     ['Número:', 'numero'],
     ['Bairro:', 'bairro'],
-    ['Ponto Referência:', 'pontoReferencia']
+    ['Ponto Referência:', 'pontoReferencia'],
     ['Zona eleitoral:', 'zonaEleitoral']
   ] as const
 
@@ -259,4 +259,5 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     </div>
   )
 }
+
 
