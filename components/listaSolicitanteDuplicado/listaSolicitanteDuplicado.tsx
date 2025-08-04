@@ -37,7 +37,7 @@ export default function ListaSolicitantesDuplicados() {
   const [showFilters, setShowFilters] = useState(false)
   const [focusedSelect, setFocusedSelect] = useState('')
 
-  useEffect(() => {
+  // useEffect(() => {
     const fetchData = async () => {
       try {
         const token = getToken()
@@ -54,6 +54,7 @@ export default function ListaSolicitantesDuplicados() {
       }
     }
 
+    useEffect(() => {
     fetchData()
   }, [])
 
@@ -287,6 +288,7 @@ export default function ListaSolicitantesDuplicados() {
         <RegistroModal
           data={selected}
           onClose={() => setSelected(null)}
+          onSuccess={fetchData}
         />
       )}
     </div>
