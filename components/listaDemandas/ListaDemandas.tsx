@@ -327,7 +327,7 @@ function formatarDataParaExibicao(dataISO: string) {
             ))}
             {paginatedData.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center text-gray-500 py-4">
+                <td colSpan={9} className="text-center text-gray-500 py-4">
                   Nenhuma demanda encontrada.
                 </td>
               </tr>
@@ -356,3 +356,4 @@ function formatarDataParaExibicao(dataISO: string) {
     </div>
   )
 }
+
