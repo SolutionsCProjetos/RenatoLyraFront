@@ -9,6 +9,7 @@ import Image from 'next/image'
 import ListaSolicitante from '../../components/listaSolicitante/ListaSolicitante'
 import ListaDemandas from '../../components/listaDemandas/ListaDemandas'
 import AdminPage from '../../components/adm/Admin'
+import ListaSolicitantesDuplicados from '../../components/listaSolicitanteDuplicado/listaSolicitanteDuplicado'
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -48,7 +49,10 @@ export default function DashboardPage() {
     router.push('/')
   }
 
-  const menuItems = ['Lista Demandas', 'Lista Solicitantes']
+  // const menuItems = ['Lista Demandas', 'Lista Solicitantes']
+  const menuItems = isAdmin
+  ? ['Lista Demandas', 'Lista Solicitantes', 'Lista Duplicados']
+  : ['Lista Demandas', 'Lista Solicitantes']
 
   return (
     <div className="flex min-h-screen">
@@ -139,6 +143,7 @@ export default function DashboardPage() {
         <main className="p-6">
           {activePage === 'Lista Demandas' && <ListaDemandas />}
           {activePage === 'Lista Solicitantes' && <ListaSolicitante />}
+          {activePage === 'Lista Duplicados' && isAdmin && <ListaSolicitantesDuplicados/>}
           {activePage === 'Administrativo' && isAdmin && <AdminPage />}
           {activePage === 'Administrativo' && !isAdmin && (
             <p className="text-red-600 font-semibold">Acesso não autorizado.</p>
@@ -148,3 +153,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+
