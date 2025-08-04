@@ -55,7 +55,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     zona: '',
     pontoReferencia: '',
     secao: '',
-    indicadoPor: ''
+    indicadoPor: '',
+    zonaEleitoral: ''
   })
 
   useEffect(() => {
@@ -73,7 +74,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
         zona: item.zona || '',
         pontoReferencia: item.pontoReferencia || '',
         secao: item.secaoEleitoral || '',
-        indicadoPor: item.indicadoPor || ''
+        indicadoPor: item.indicadoPor || '',
+        zonaEleitoral: form.zonaEleitoral
       })
     }
   }, [item])
@@ -145,7 +147,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       zona: form.zona,
       pontoReferencia: form.pontoReferencia,
       secaoEleitoral: form.secao,
-      indicadoPor:form.indicadoPor
+      indicadoPor:form.indicadoPor,
+      zonaEleitoral: form.zonaEleitoral
     }
 
     try {
@@ -175,6 +178,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Número:', 'numero'],
     ['Bairro:', 'bairro'],
     ['Ponto Referência:', 'pontoReferencia']
+    ['Zona eleitoral:', 'zonaEleitoral']
   ] as const
 
   return (
@@ -255,3 +259,4 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     </div>
   )
 }
+
