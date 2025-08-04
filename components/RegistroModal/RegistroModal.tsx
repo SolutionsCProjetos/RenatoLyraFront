@@ -21,8 +21,10 @@ interface RegistroModalProps {
     pontoReferencia: string
     secaoEleitoral: string
     indicadoPor: string
+    zonaEleitoral: string
   }>
   onClose: () => void
+  onSuccess?: () => void
 }
 
 function isValidCPF(cpf: string) {
@@ -66,7 +68,7 @@ function maskTitulo(value: string) {
     .slice(0, 14)
 }
 
-export default function RegistroModal({ data, onClose }: RegistroModalProps) {
+export default function RegistroModal({ data, onClose, onSuccess }: RegistroModalProps) {
   const [form, setForm] = useState({
     nome: data.nomeCompleto || '',
     cpf: maskCPF(data.cpf || ''),
@@ -82,7 +84,8 @@ export default function RegistroModal({ data, onClose }: RegistroModalProps) {
     secao: data.secaoEleitoral || '',
     senha: '',
     indicadoPor: data.indicadoPor || '',
-    meio: ''
+    meio: '',
+    zonaEleitoral: ''
   })
 
   const [erro, setErro] = useState('')
@@ -133,7 +136,8 @@ export default function RegistroModal({ data, onClose }: RegistroModalProps) {
         secaoEleitoral: form.secao,
         senha: form.senha,
         indicadoPor: form.indicadoPor,
-        meio: form.meio
+        meio: form.meio,
+        zonaEleitoral: form.zonaEleitoral
       }
 
       await registrarSolicitante(payload, token!)
@@ -141,7 +145,10 @@ export default function RegistroModal({ data, onClose }: RegistroModalProps) {
       toast.success('Solicitante criado com sucesso!', {
         action: {
           label: 'Fechar',
-          onClick: () => onClose()
+           onClick: () => {
+            onClose()
+            onSuccess?.() // Chama a função de sucesso após fechar
+          }
         }
       })
       onClose()
@@ -172,7 +179,8 @@ export default function RegistroModal({ data, onClose }: RegistroModalProps) {
             { name: 'numero', label: 'Número' },
             { name: 'bairro', label: 'Bairro' },
             { name: 'pontoReferencia', label: 'Ponto de Referência' },
-            { name: 'indicadoPor', label: 'Indicado por' }
+            { name: 'indicadoPor', label: 'Indicado por' },
+            { name: 'zonaEleitoral', label: 'Zona eleitoral' }
           ].map(({ name, label, type }) => (
             <div key={name} className="flex flex-col">
               <label className="text-sm text-gray-700 mb-1">{label}</label>
