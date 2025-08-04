@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner'
 import './globals.css'
 import { ReactNode } from 'react'
 
@@ -6,7 +7,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <body className="font-sans bg-gray-100">
         {children}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   )
 }
+
