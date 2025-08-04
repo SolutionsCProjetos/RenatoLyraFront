@@ -18,6 +18,7 @@ export interface SolicitanteData {
   secaoEleitoral?: string
   indicadoPor: string;
   meio: string;
+  zonaEleitoral?: string;
 }
 
 // Tipos para as respostas
@@ -134,3 +135,4 @@ export async function updateSolicitante(id: number, data: any): Promise<any> {
     throw new Error('Erro inesperado ao atualizar solicitante')
   }
 }
+
