@@ -4,10 +4,37 @@ import { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import { updateSolicitante } from './action'
 import { getToken } from '../../utils/auth'
+import { getLideres } from '../../core/Liderers'
 
 interface EditarRegistroProps {
   item: any
   setClose: () => void
+}
+
+interface Lider {
+  id: number;
+  nome: string;
+  bairro: string;
+}
+
+interface FormState {
+  nome: string;
+  cpf: string;
+  titulo: string;
+  telefone: string;
+  email: string;
+  cep: string;
+  endereco: string;
+  numero: string;
+  bairro: string;
+  zona: string;
+  pontoReferencia: string;
+  secao: string;
+  indicadoPor: string;
+  zonaEleitoral: string;
+  observacoes: string;
+  liderNome: string;
+  liderId: string;
 }
 
 function isValidCPF(cpf: string) {
@@ -41,8 +68,11 @@ function maskCEP(value: string) {
 export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
   const [focused, setFocused] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
+  const [liderDropdownOpen, setLiderDropdownOpen] = useState(false)
+  const [lideres, setLideres] = useState<Lider[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     nome: '',
     cpf: '',
     titulo: '',
@@ -57,31 +87,53 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     secao: '',
     indicadoPor: '',
     zonaEleitoral: '',
-    observacoes: ''
+    observacoes: '',
+    liderNome: '',
+    liderId: ''
   })
 
   useEffect(() => {
-    if (item) {
-      // console.log('Item recebido:', item)
+    const token = getToken()
+    if (token) {
+      getLideres(token)
+        .then(data => {
+          setLideres(data)
+          setLoading(false)
+        })
+        .catch(err => {
+          console.error("Erro ao buscar líderes", err)
+          setLoading(false)
+        })
+    } else {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (item && !loading && lideres.length > 0) {
+      const liderSelecionado = lideres.find(l => l.id.toString() === item.liderId?.toString())
+      
       setForm({
-        nome: item.nomeCompleto || '',
-        cpf: maskCPF(item.cpf || ''),
-        titulo: item.titulo || '',
-        telefone: item.telefoneContato || '',
-        email: item.email || '',
-        cep: maskCEP(item.cep || ''),
-        endereco: item.endereco || '',
-        numero: item.num || '',
-        bairro: item.bairro || '',
-        zona: item.zona || '',
-        pontoReferencia: item.pontoReferencia || '',
-        secao: item.secaoEleitoral || '',
-        indicadoPor: item.indicadoPor || '',
-        zonaEleitoral: item.zonaEleitoral,
-        observacoes: item.observacoes || ''
+        nome: item.nomeCompleto ?? '',
+        cpf: maskCPF(item.cpf ?? ''),
+        titulo: item.titulo ?? '',
+        telefone: item.telefoneContato ?? '',
+        email: item.email ?? '',
+        cep: maskCEP(item.cep ?? ''),
+        endereco: item.endereco ?? '',
+        numero: item.num?.toString() ?? '',
+        bairro: item.bairro ?? '',
+        zona: item.zona ?? '',
+        pontoReferencia: item.pontoReferencia ?? '',
+        secao: item.secaoEleitoral ?? '',
+        indicadoPor: item.indicadoPor ?? '',
+        zonaEleitoral: item.zonaEleitoral ?? '',
+        observacoes: item.observacoes ?? '',
+        liderNome: liderSelecionado ? `${liderSelecionado.nome} - ${liderSelecionado.bairro}` : '',
+        liderId: item.liderId?.toString() ?? ''
       })
     }
-  }, [item])
+  }, [item, loading, lideres])
 
   const handleChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -103,8 +155,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
           if (!data.erro) {
             setForm(prev => ({
               ...prev,
-              endereco: data.logradouro || '',
-              bairro: data.bairro || ''
+              endereco: data.logradouro ?? '',
+              bairro: data.bairro ?? ''
             }))
           }
         } catch (err) {
@@ -116,14 +168,22 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     }
   }
 
-
-  const token = getToken()
-  if (!token) {
-    console.error('Sessão expirada. Faça login novamente.')
-    return null
+  const handleLiderSelect = (lider: Lider) => {
+    setForm(prev => ({
+      ...prev,
+      liderId: lider.id.toString(),
+      liderNome: `${lider.nome} - ${lider.bairro}`
+    }))
+    setLiderDropdownOpen(false)
   }
 
   const handleSubmit = async () => {
+    const token = getToken()
+    if (!token) {
+      alert('Sessão expirada. Faça login novamente.')
+      return
+    }
+
     const camposObrigatorios: (keyof typeof form)[] = ['nome', 'cpf', 'telefone', 'email']
     const faltando = camposObrigatorios.filter(campo => !form[campo].trim())
 
@@ -133,10 +193,10 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       return
     }
 
-    // if (!isValidCPF(form.cpf)) {
-    //   alert('CPF inválido.')
-    //   return
-    // }
+    if (form.cpf && !isValidCPF(form.cpf)) {
+      alert('CPF inválido')
+      return
+    }
 
     setErrors([])
 
@@ -146,7 +206,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       titulo: form.titulo,
       telefoneContato: form.telefone,
       email: form.email,
-      cep: form.cep,
+      cep: form.cep.replace(/\D/g, ''),
       endereco: form.endereco,
       num: form.numero,
       bairro: form.bairro,
@@ -155,7 +215,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       secaoEleitoral: form.secao,
       indicadoPor: form.indicadoPor,
       zonaEleitoral: form.zonaEleitoral,
-      observacoes: form.observacoes
+      observacoes: form.observacoes,
+      liderId: form.liderId
     }
 
     try {
@@ -175,7 +236,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Título de Eleitor:', 'titulo'],
     ['*Telefone:', 'telefone'],
     ['*E-mail:', 'email'],
-    ['Seção Eleitoral:', 'secao',],
+    ['Seção Eleitoral:', 'secao'],
     ['Indicado Por:', 'indicadoPor'],
     ['Zona eleitoral:', 'zonaEleitoral']
   ] as const
@@ -187,6 +248,16 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Bairro:', 'bairro'],
     ['Ponto Referência:', 'pontoReferencia']
   ] as const
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-[#b5e4f1] px-4 py-8">
+        <div className="bg-white w-full max-w-4xl p-6 rounded-xl shadow-lg">
+          <p>Carregando...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#b5e4f1] px-4 py-8">
@@ -201,12 +272,45 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
                 <label className="text-sm font-medium">{label}</label>
                 <input
                   name={name}
-                  value={form[name]}
+                  value={form[name as keyof FormState] ?? ''}
                   onChange={handleChange}
                   className={`w-full border ${isError(name) ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
                 />
               </div>
             ))}
+
+            <div className="relative">
+              <label className="text-sm font-medium">Líder:</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={form.liderNome ?? ''}
+                  readOnly
+                  onClick={() => setLiderDropdownOpen(!liderDropdownOpen)}
+                  className={`w-full border ${isError('liderNome') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none cursor-pointer`}
+                  placeholder="Selecione um líder"
+                />
+                <FaChevronDown
+                  className={`absolute right-3 top-3 text-[#007cb2] pointer-events-none transition-transform ${liderDropdownOpen ? 'rotate-180' : ''}`}
+                  size={14}
+                />
+              </div>
+
+              {liderDropdownOpen && (
+                <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg">
+                  {lideres.map(lider => (
+                    <div
+                      key={lider.id}
+                      className="px-4 py-2 hover:bg-[#c4f9ff] cursor-pointer border-b border-gray-100 last:border-b-0"
+                      onClick={() => handleLiderSelect(lider)}
+                    >
+                      <div className="font-medium">{lider.nome}</div>
+                      <div className="text-xs text-gray-600">{lider.bairro}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -218,7 +322,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
                 <label className="text-sm font-medium">{label}</label>
                 <input
                   name={name}
-                  value={form[name]}
+                  value={form[name as keyof FormState] ?? ''}
                   onChange={handleChange}
                   className={`w-full border ${isError(name) ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
                 />
@@ -229,7 +333,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
               <label className="text-sm font-medium">Zona:</label>
               <select
                 name="zona"
-                value={form.zona}
+                value={form.zona ?? ''}
                 onChange={handleChange}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
@@ -239,7 +343,6 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
                 <option value="Urbana">Urbana</option>
                 <option value="Rural">Rural</option>
               </select>
-
               <FaChevronDown
                 className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${focused || form.zona ? 'rotate-180' : ''}`}
                 size={14}
@@ -247,18 +350,18 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
             </div>
           </div>
         </div>
+
         <div className="mb-4">
           <h3 className="font-semibold mb-2">Observações</h3>
           <textarea
             name="observacoes"
-            value={form.observacoes || ''}
+            value={form.observacoes ?? ''}
             onChange={handleChange}
             rows={3}
             placeholder="Digite informações adicionais, anotações ou histórico..."
             className="w-full border border-[#007cb2] rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none resize-none"
           />
         </div>
-
 
         <div className="flex justify-end gap-4">
           <button
