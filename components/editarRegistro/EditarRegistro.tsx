@@ -56,11 +56,13 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     pontoReferencia: '',
     secao: '',
     indicadoPor: '',
-    zonaEleitoral: ''
+    zonaEleitoral: '',
+    observacoes: ''
   })
 
   useEffect(() => {
     if (item) {
+      // console.log('Item recebido:', item)
       setForm({
         nome: item.nomeCompleto || '',
         cpf: maskCPF(item.cpf || ''),
@@ -75,12 +77,15 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
         pontoReferencia: item.pontoReferencia || '',
         secao: item.secaoEleitoral || '',
         indicadoPor: item.indicadoPor || '',
-        zonaEleitoral: item.zonaEleitoral
+        zonaEleitoral: item.zonaEleitoral,
+        observacoes: item.observacoes || ''
       })
     }
   }, [item])
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = async (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
     let newValue = value
 
@@ -110,6 +115,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       setForm(prev => ({ ...prev, [name]: newValue }))
     }
   }
+
 
   const token = getToken()
   if (!token) {
@@ -147,8 +153,9 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       zona: form.zona,
       pontoReferencia: form.pontoReferencia,
       secaoEleitoral: form.secao,
-      indicadoPor:form.indicadoPor,
-      zonaEleitoral: form.zonaEleitoral
+      indicadoPor: form.indicadoPor,
+      zonaEleitoral: form.zonaEleitoral,
+      observacoes: form.observacoes
     }
 
     try {
@@ -169,7 +176,8 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['*Telefone:', 'telefone'],
     ['*E-mail:', 'email'],
     ['Seção Eleitoral:', 'secao',],
-    ['Indicado Por:', 'indicadoPor']
+    ['Indicado Por:', 'indicadoPor'],
+    ['Zona eleitoral:', 'zonaEleitoral']
   ] as const
 
   const camposEndereco = [
@@ -177,8 +185,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     ['Endereço:', 'endereco'],
     ['Número:', 'numero'],
     ['Bairro:', 'bairro'],
-    ['Ponto Referência:', 'pontoReferencia'],
-    ['Zona eleitoral:', 'zonaEleitoral']
+    ['Ponto Referência:', 'pontoReferencia']
   ] as const
 
   return (
@@ -240,6 +247,18 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
             </div>
           </div>
         </div>
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2">Observações</h3>
+          <textarea
+            name="observacoes"
+            value={form.observacoes || ''}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Digite informações adicionais, anotações ou histórico..."
+            className="w-full border border-[#007cb2] rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none resize-none"
+          />
+        </div>
+
 
         <div className="flex justify-end gap-4">
           <button
@@ -259,6 +278,3 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
     </div>
   )
 }
-
-
-
