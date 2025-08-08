@@ -28,7 +28,8 @@ interface FormState {
   envioParaResponsavel: string
   observacoes: string
   solicitantId: number | null
-  reincidencia?: string
+  reincidencia?: string,
+  indicadoPor?: string
 }
 
 interface CadastroDemandaProps {
@@ -109,7 +110,8 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     envioCobranca2: '',
     envioParaResponsavel: '',
     observacoes: '',
-    solicitantId: null
+    solicitantId: null,
+    indicadoPor: '',
   })
 
   const token = getToken()
@@ -141,7 +143,8 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
         envioParaResponsavel: editData.envioParaResponsavel || '',
         observacoes: editData.observacoes || '',
         solicitantId: editData.solicitanteId,
-        reincidencia: editData.reincidencia || ''
+        reincidencia: editData.reincidencia || '',
+        indicadoPor: editData.indicadoPor || editData.solicitantes.indicadoPor || editData.solicitantes.solicitante || '',
       })
       setObs(editData.observacoes || '')
     } else {
@@ -320,6 +323,10 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
             <div>
               <label className="text-sm font-medium block mb-1">Data de Término:</label>
               {renderInput('dataTermino', form.dataTermino, 'date', false, !isAdmin)}
+            </div>
+            <div>
+              <label className="text-sm font-medium block mb-1">Indicado Por:</label>
+              {renderInput('indicadoPor', form.indicadoPor || '', 'text', false, !isAdmin)}
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">Solicitante:</label>
