@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import { updateSolicitante } from './action'
-import { getToken } from '../../utils/auth'
+import { getToken, parseJwt } from '../../utils/auth'
 import { getLideres } from '../../core/Liderers'
 
 interface EditarRegistroProps {
@@ -71,6 +71,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
   const [liderDropdownOpen, setLiderDropdownOpen] = useState(false)
   const [lideres, setLideres] = useState<Lider[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAdmin2, setIsAdmin] = useState(false)
 
   const [form, setForm] = useState<FormState>({
     nome: '',
@@ -94,11 +95,15 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
 
   useEffect(() => {
     const token = getToken()
+
+    const decoded = token ? parseJwt(token) : null
+    const isAdmin = decoded?.adm === true
     if (token) {
       getLideres(token)
         .then(data => {
           setLideres(data)
           setLoading(false)
+          setIsAdmin(isAdmin)
         })
         .catch(err => {
           console.error("Erro ao buscar líderes", err)
@@ -297,39 +302,40 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
                 />
               </div>
             ))}
-
-            <div className="relative lider-dropdown-container">
-              <label className="text-sm font-medium">Líder:</label>
-              <div className="relative lider-input">
-                <input
-                  type="text"
-                  value={form.liderNome ?? ''}
-                  readOnly
-                  onClick={() => setLiderDropdownOpen(!liderDropdownOpen)}
-                  className={`w-full border ${isError('liderNome') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none cursor-pointer`}
-                  placeholder="Selecione um líder"
-                />
-                <FaChevronDown
-                  className={`absolute right-3 top-3 text-[#007cb2] pointer-events-none transition-transform ${liderDropdownOpen ? 'rotate-180' : ''}`}
-                  size={14}
-                />
-              </div>
-
-              {liderDropdownOpen && (
-                <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg">
-                  {lideres.map(lider => (
-                    <div
-                      key={lider.id}
-                      className="px-4 py-2 hover:bg-[#c4f9ff] cursor-pointer border-b border-gray-100 last:border-b-0"
-                      onClick={() => handleLiderSelect(lider)}
-                    >
-                      <div className="font-medium">{lider.nome}</div>
-                      <div className="text-xs text-gray-600">{lider.bairro}</div>
-                    </div>
-                  ))}
+            {isAdmin2 && (
+              <div className="relative lider-dropdown-container">
+                <label className="text-sm font-medium">Líder:</label>
+                <div className="relative lider-input">
+                  <input
+                    type="text"
+                    value={form.liderNome ?? ''}
+                    readOnly
+                    onClick={() => setLiderDropdownOpen(!liderDropdownOpen)}
+                    className={`w-full border ${isError('liderNome') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none cursor-pointer`}
+                    placeholder="Selecione um líder"
+                  />
+                  <FaChevronDown
+                    className={`absolute right-3 top-3 text-[#007cb2] pointer-events-none transition-transform ${liderDropdownOpen ? 'rotate-180' : ''}`}
+                    size={14}
+                  />
                 </div>
-              )}
-            </div>
+
+                {liderDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg">
+                    {lideres.map(lider => (
+                      <div
+                        key={lider.id}
+                        className="px-4 py-2 hover:bg-[#c4f9ff] cursor-pointer border-b border-gray-100 last:border-b-0"
+                        onClick={() => handleLiderSelect(lider)}
+                      >
+                        <div className="font-medium">{lider.nome}</div>
+                        <div className="text-xs text-gray-600">{lider.bairro}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
