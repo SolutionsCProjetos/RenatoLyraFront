@@ -10,6 +10,7 @@ import ListaSolicitante from '../../components/listaSolicitante/ListaSolicitante
 import ListaDemandas from '../../components/listaDemandas/ListaDemandas'
 import AdminPage from '../../components/adm/Admin'
 import ListaSolicitantesDuplicados from '../../components/listaSolicitanteDuplicado/listaSolicitanteDuplicado'
+import ListaLideres from '../../components/lideres/lideres'
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -51,7 +52,7 @@ export default function DashboardPage() {
 
   // const menuItems = ['Lista Demandas', 'Lista Solicitantes']
   const menuItems = isAdmin
-  ? ['Lista Demandas', 'Lista Solicitantes', 'Lista Duplicados']
+  ? ['Lista Demandas', 'Lista Solicitantes', 'Lista Duplicados', 'Lista Líderes']
   : ['Lista Demandas', 'Lista Solicitantes']
 
   return (
@@ -144,6 +145,7 @@ export default function DashboardPage() {
           {activePage === 'Lista Demandas' && <ListaDemandas />}
           {activePage === 'Lista Solicitantes' && <ListaSolicitante />}
           {activePage === 'Lista Duplicados' && isAdmin && <ListaSolicitantesDuplicados/>}
+          {activePage === 'Lista Líderes' && isAdmin && <ListaLideres />}
           {activePage === 'Administrativo' && isAdmin && <AdminPage />}
           {activePage === 'Administrativo' && !isAdmin && (
             <p className="text-red-600 font-semibold">Acesso não autorizado.</p>
@@ -153,4 +155,5 @@ export default function DashboardPage() {
     </div>
   )
 }
+
 
