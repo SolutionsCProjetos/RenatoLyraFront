@@ -59,6 +59,8 @@ interface Lider {
 
 export default function RegistroPage() {
   const [focused, setFocused] = useState(false);
+  const [meioFocused, setMeioFocused] = useState(false);
+  const [zonaFocused, setZonaFocused] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     cpf: '',
@@ -90,6 +92,7 @@ export default function RegistroPage() {
   const [liderDropdownOpen, setLiderDropdownOpen] = useState(false);
   const [lideres, setLideres] = useState<{ id: number, nome: string, bairro: string }[]>([]);
 
+
   useEffect(() => {
     const token = getToken();
     const decoded = token ? parseJwt(token) : null;
@@ -117,6 +120,25 @@ export default function RegistroPage() {
     setIsAdmin(adminStatus);
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Verifica se o clique foi fora do dropdown e do input
+      if (
+        liderDropdownOpen &&
+        !target.closest('.lider-dropdown') &&
+        !target.closest('.lider-input')
+      ) {
+        setLiderDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [liderDropdownOpen]);
 
   if (isLoading || !isAdmin) {
     return (
@@ -333,7 +355,7 @@ export default function RegistroPage() {
             <div className="mb-4">
               <div className="relative">
                 <label className="text-sm font-medium">Líder responsável:</label>
-                <div className="relative">
+                <div className="relative lider-input">
                   <input
                     type="text"
                     value={form.liderId ? `${lideres.find(l => l.id.toString() === form.liderId)?.nome || ''} - ${lideres.find(l => l.id.toString() === form.liderId)?.bairro || ''}` : ''}
@@ -349,7 +371,7 @@ export default function RegistroPage() {
                 </div>
 
                 {liderDropdownOpen && (
-                  <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg lider-dropdown">
                     {lideres.map(lider => (
                       <div
                         key={lider.id}
@@ -378,8 +400,8 @@ export default function RegistroPage() {
                 name="meio"
                 value={form.meio}
                 onChange={handleChange}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
+                onFocus={() => setMeioFocused(true)}
+                onBlur={() => setMeioFocused(false)}
                 className={`w-full appearance-none border ${isError('meio') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 pr-10 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
               >
                 <option value="">Selecione</option>
@@ -387,7 +409,7 @@ export default function RegistroPage() {
                 <option value="WhatsApp">WhatsApp</option>
               </select>
               <FaChevronDown
-                className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${focused || form.meio ? 'rotate-180' : ''}`}
+                className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${meioFocused || form.meio ? 'rotate-180' : ''}`}
                 size={14}
               />
             </div>
@@ -423,9 +445,9 @@ export default function RegistroPage() {
                 name="zona"
                 value={form.zona}
                 onChange={handleChange}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                className={`w-full appearance-none border ${isError('zona') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 pr-10 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
+                onFocus={() => setZonaFocused(true)}
+                onBlur={() => setZonaFocused(false)}
+                className={`w-full appearance-none border ${isError('meio') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 pr-10 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
               >
                 <option value="">Selecione</option>
                 <option value="Urbana">Urbana</option>
@@ -433,7 +455,7 @@ export default function RegistroPage() {
               </select>
 
               <FaChevronDown
-                className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${focused || form.zona ? 'rotate-180' : ''}`}
+                className={`absolute right-3 top-[35px] text-[#007cb2] pointer-events-none transition-transform duration-200 ${zonaFocused || form.zona ? 'rotate-180' : ''}`}
                 size={14}
               />
             </div>
