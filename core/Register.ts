@@ -19,6 +19,8 @@ export interface SolicitanteData {
   indicadoPor: string;
   meio: string;
   zonaEleitoral?: string;
+  observacoes?: string;
+  liderNome?: string;
 }
 
 // Tipos para as respostas
@@ -135,4 +137,5 @@ export async function updateSolicitante(id: number, data: any): Promise<any> {
     throw new Error('Erro inesperado ao atualizar solicitante')
   }
 }
+
 
