@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { registrarSolicitante } from "./action";
 import { getToken, parseJwt } from '../../utils/auth';
+import { getLideres } from '../../core/Liderers';
 
 function isValidCPF(cpf: string) {
   cpf = cpf.replace(/[^\d]+/g, '');
@@ -50,6 +51,12 @@ function maskTitulo(value: string) {
     .slice(0, 14);
 }
 
+interface Lider {
+  id: number;
+  nome: string;
+  bairro: string;
+}
+
 export default function RegistroPage() {
   const [focused, setFocused] = useState(false);
   const [form, setForm] = useState({
@@ -68,7 +75,10 @@ export default function RegistroPage() {
     senha: '',
     indicadoPor: '',
     meio: '',
-    zonaEleitoral: ''
+    zonaEleitoral: '',
+    observacoes: '',
+    liderNome: '',
+    liderId: '',
   });
 
   // console.log('📤 Enviando para API:', form);
@@ -77,8 +87,10 @@ export default function RegistroPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [isAdmin, setIsAdmin] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
+  const [liderDropdownOpen, setLiderDropdownOpen] = useState(false);
+  const [lideres, setLideres] = useState<{ id: number, nome: string, bairro: string }[]>([]);
 
-   useEffect(() => {
+  useEffect(() => {
     const token = getToken();
     const decoded = token ? parseJwt(token) : null;
     const adminStatus = decoded?.adm === true;
@@ -95,6 +107,13 @@ export default function RegistroPage() {
       return;
     }
 
+    getLideres(token)
+      .then((data) => setLideres(data))
+      .catch((err) => {
+        console.error("Erro ao buscar líderes", err);
+        setLideres([]);
+      });
+
     setIsAdmin(adminStatus);
     setIsLoading(false);
   }, []);
@@ -109,7 +128,7 @@ export default function RegistroPage() {
     );
   }
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
     let newValue = value;
@@ -189,7 +208,9 @@ export default function RegistroPage() {
         senha: form.senha,
         indicadoPor: form.indicadoPor,
         meio: form.meio,
-        zonaEleitoral: form.zonaEleitoral
+        zonaEleitoral: form.zonaEleitoral,
+        observacoes: form.observacoes,
+        liderNome: form.liderNome,
       });
 
 
@@ -202,7 +223,7 @@ export default function RegistroPage() {
   const isError = (campo: string) => errors.includes(campo);
 
   //  {isAdmin && (
-    
+
   //  )}
 
   return (
@@ -297,6 +318,7 @@ export default function RegistroPage() {
 
           {/* Linha com Indicado por quem e Meio */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
             <div>
               <label className="text-sm font-medium">Indicado por quem:</label>
               <input
@@ -306,6 +328,48 @@ export default function RegistroPage() {
                 onChange={handleChange}
                 className={`w-full border ${isError('indicadoPor') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
               />
+            </div>
+
+            <div className="mb-4">
+              <div className="relative">
+                <label className="text-sm font-medium">Líder responsável:</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={form.liderId ? `${lideres.find(l => l.id.toString() === form.liderId)?.nome || ''} - ${lideres.find(l => l.id.toString() === form.liderId)?.bairro || ''}` : ''}
+                    readOnly
+                    onClick={() => setLiderDropdownOpen(!liderDropdownOpen)}
+                    className={`w-full border ${isError('liderId') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none cursor-pointer`}
+                    placeholder="Selecione um líder..."
+                  />
+                  <FaChevronDown
+                    className={`absolute right-3 top-3 text-[#007cb2] pointer-events-none transition-transform ${liderDropdownOpen ? 'rotate-180' : ''}`}
+                    size={14}
+                  />
+                </div>
+
+                {liderDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-[#007cb2] rounded shadow-lg">
+                    {lideres.map(lider => (
+                      <div
+                        key={lider.id}
+                        className="px-4 py-2 hover:bg-[#c4f9ff] cursor-pointer border-b border-gray-100 last:border-b-0"
+                        onClick={() => {
+                          setForm(prev => ({
+                            ...prev,
+                            liderId: lider.id.toString(),
+                            liderNome: lider.nome
+                          }));
+                          setLiderDropdownOpen(false);
+                        }}
+                      >
+                        <div className="font-medium">{lider.nome}</div>
+                        <div className="text-xs text-gray-600">{lider.bairro}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="relative">
@@ -375,6 +439,18 @@ export default function RegistroPage() {
             </div>
           </div>
         </div>
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2">Observações</h3>
+          <textarea
+            name="observacoes"
+            value={form.observacoes}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Digite informações adicionais, anotações ou histórico..."
+            className="w-full border border-[#007cb2] rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none resize-none"
+          />
+        </div>
+
 
         <div className="flex justify-end gap-4">
           <button
@@ -394,4 +470,3 @@ export default function RegistroPage() {
     </div>
   );
 }
-
