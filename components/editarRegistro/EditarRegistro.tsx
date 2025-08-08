@@ -112,7 +112,7 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
   useEffect(() => {
     if (item && !loading && lideres.length > 0) {
       const liderSelecionado = lideres.find(l => l.id.toString() === item.liderId?.toString())
-      
+
       setForm({
         nome: item.nomeCompleto ?? '',
         cpf: maskCPF(item.cpf ?? ''),
@@ -134,6 +134,25 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
       })
     }
   }, [item, loading, lideres])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Verifica se o clique foi fora do dropdown e do input
+      if (
+        liderDropdownOpen &&
+        !target.closest('.lider-dropdown-container') &&
+        !target.closest('.lider-input')
+      ) {
+        setLiderDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [liderDropdownOpen]);
 
   const handleChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -279,9 +298,9 @@ export default function RegistroPage({ item, setClose }: EditarRegistroProps) {
               </div>
             ))}
 
-            <div className="relative">
+            <div className="relative lider-dropdown-container">
               <label className="text-sm font-medium">Líder:</label>
-              <div className="relative">
+              <div className="relative lider-input">
                 <input
                   type="text"
                   value={form.liderNome ?? ''}
