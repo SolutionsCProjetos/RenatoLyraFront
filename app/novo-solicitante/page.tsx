@@ -413,6 +413,17 @@ export default function RegistroPage() {
                 size={14}
               />
             </div>
+
+            <div>
+              <label className="text-sm font-medium">Zona Eleitoral:</label>
+              <input
+                type="text"
+                name="zonaEleitoral"
+                value={form.zonaEleitoral}
+                onChange={handleChange}
+                className={`w-full border ${isError('indicadoPor') ? 'border-red-500' : 'border-[#007cb2]'} rounded px-2 py-1 focus:ring-2 focus:ring-[#007cb2] focus:outline-none`}
+              />
+            </div>
           </div>
         </div>
 
@@ -426,7 +437,6 @@ export default function RegistroPage() {
               ['Número:', 'numero'],
               ['Bairro:', 'bairro'],
               ['Ponto Referência:', 'pontoReferencia'],
-              ['Zona eleitoral:', 'zonaEleitoral']
             ].map(([label, name]) => (
               <div key={name}>
                 <label className="text-sm font-medium">{label}</label>
