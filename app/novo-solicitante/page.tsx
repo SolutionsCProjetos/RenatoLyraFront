@@ -191,8 +191,12 @@ export default function RegistroPage() {
       .filter(([campo, valor]) =>
         campo !== 'indicadoPor' &&
         campo !== 'meio' &&
+        campo !== 'liderId' &&
+        campo !== 'liderNome' &&
+        campo !== 'observacoes' &&
         !valor.trim()
       );
+
 
     if (camposObrigatorios.length > 0) {
       const nomesCampos = camposObrigatorios.map(([campo]) => campo);
@@ -502,3 +506,4 @@ export default function RegistroPage() {
     </div>
   );
 }
+
