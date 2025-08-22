@@ -248,11 +248,9 @@ export default function RegistroPage() {
   // };
 
 const handleSubmit = async () => {
-  // valida obrigatórios (exceto campos opcionais)
   const camposObrigatorios = Object.entries(form).filter(
     ([campo, valor]) =>
       campo !== 'indicadoPor' &&
-      campo !== 'meio' &&
       campo !== 'liderId' &&
       campo !== 'liderNome' &&
       campo !== 'observacoes' &&
@@ -280,8 +278,7 @@ const handleSubmit = async () => {
   setIsSubmitting(true);
 
   try {
-    // monta o payload
-    const payload = {
+    const payload: any = {
       nomeCompleto: form.nome,
       cpf: form.cpf,
       titulo: form.titulo,
@@ -295,28 +292,23 @@ const handleSubmit = async () => {
       pontoReferencia: form.pontoReferencia,
       secaoEleitoral: form.secao,
       senha: form.senha,
-      indicadoPor: form.indicadoPor || undefined,
-      meio: form.meio || undefined,
-      zonaEleitoral: form.zonaEleitoral || undefined,
-      observacoes: form.observacoes || undefined,
-      liderNome: form.liderNome || undefined,
-      // se precisar enviar o id também:
-      // liderId: form.liderId ? Number(form.liderId) : undefined,
+      meio: form.meio, // obrigatório
+      ...(form.indicadoPor && { indicadoPor: form.indicadoPor }),
+      ...(form.zonaEleitoral && { zonaEleitoral: form.zonaEleitoral }),
+      ...(form.observacoes && { observacoes: form.observacoes }),
+      ...(form.liderNome && { liderNome: form.liderNome }),
+      ...(form.liderId && { liderId: Number(form.liderId) }),
     };
 
     const res = await registrarSolicitante(payload);
 
-    // >>> AQUI está a diferença principal <<<
     if (!res || res.ok === false) {
-      const msg = res?.error || 'Erro ao salvar solicitante.';
-      alert(msg);
-      return; // não navega
+      alert(res?.error || 'Erro ao salvar solicitante.');
+      return;
     }
 
-    // sucesso
     window.location.href = '/dashboard';
   } catch (e) {
-    // exceções fora do fluxo (ex.: rede interrompida)
     alert('Erro inesperado ao enviar. Tente novamente.');
     console.error(e);
   } finally {
@@ -585,5 +577,6 @@ const handleSubmit = async () => {
     </div>
   );
 }
+
 
 
