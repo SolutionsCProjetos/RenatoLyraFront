@@ -61,6 +61,7 @@ export default function RegistroPage() {
   const [focused, setFocused] = useState(false);
   const [meioFocused, setMeioFocused] = useState(false);
   const [zonaFocused, setZonaFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     cpf: '',
@@ -186,65 +187,143 @@ export default function RegistroPage() {
     }
   };
 
-  const handleSubmit = async () => {
-    const camposObrigatorios = Object.entries(form)
-      .filter(([campo, valor]) =>
-        campo !== 'indicadoPor' &&
-        campo !== 'meio' &&
-        campo !== 'liderId' &&
-        campo !== 'liderNome' &&
-        campo !== 'observacoes' &&
-        !valor.trim()
-      );
+  // const handleSubmit = async () => {
+  //   const camposObrigatorios = Object.entries(form)
+  //     .filter(([campo, valor]) =>
+  //       campo !== 'indicadoPor' &&
+  //       campo !== 'meio' &&
+  //       campo !== 'liderId' &&
+  //       campo !== 'liderNome' &&
+  //       campo !== 'observacoes' &&
+  //       !valor.trim()
+  //     );
 
 
-    if (camposObrigatorios.length > 0) {
-      const nomesCampos = camposObrigatorios.map(([campo]) => campo);
-      setErrors(nomesCampos);
-      alert('Preencha todos os campos obrigatórios.');
-      return;
+  //   if (camposObrigatorios.length > 0) {
+  //     const nomesCampos = camposObrigatorios.map(([campo]) => campo);
+  //     setErrors(nomesCampos);
+  //     alert('Preencha todos os campos obrigatórios.');
+  //     return;
+  //   }
+
+  //   if (!isValidCPF(form.cpf)) {
+  //     alert('CPF inválido.');
+  //     return;
+  //   }
+
+  //   if (form.titulo.replace(/\D/g, '').length !== 12) {
+  //     alert('Título de eleitor inválido. Deve conter 12 dígitos.');
+  //     return;
+  //   }
+
+  //   setErrors([]);
+
+  //   try {
+  //     await registrarSolicitante({
+  //       nomeCompleto: form.nome,
+  //       cpf: form.cpf,
+  //       titulo: form.titulo,
+  //       telefoneContato: form.telefone,
+  //       email: form.email,
+  //       cep: form.cep,
+  //       endereco: form.endereco,
+  //       num: form.numero,
+  //       bairro: form.bairro,
+  //       zona: form.zona,
+  //       pontoReferencia: form.pontoReferencia,
+  //       secaoEleitoral: form.secao,
+  //       senha: form.senha,
+  //       indicadoPor: form.indicadoPor,
+  //       meio: form.meio,
+  //       zonaEleitoral: form.zonaEleitoral,
+  //       observacoes: form.observacoes,
+  //       liderNome: form.liderNome,
+  //     });
+
+
+  //     window.location.href = "/dashboard";
+  //   } catch (err) {
+  //     alert(err instanceof Error ? `Erro: ${err.message}` : 'Erro desconhecido ao salvar solicitante.');
+  //   }
+  // };
+
+const handleSubmit = async () => {
+  // valida obrigatórios (exceto campos opcionais)
+  const camposObrigatorios = Object.entries(form).filter(
+    ([campo, valor]) =>
+      campo !== 'indicadoPor' &&
+      campo !== 'meio' &&
+      campo !== 'liderId' &&
+      campo !== 'liderNome' &&
+      campo !== 'observacoes' &&
+      !String(valor).trim()
+  );
+
+  if (camposObrigatorios.length > 0) {
+    const nomesCampos = camposObrigatorios.map(([campo]) => campo);
+    setErrors(nomesCampos);
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  if (!isValidCPF(form.cpf)) {
+    alert('CPF inválido.');
+    return;
+  }
+
+  if (form.titulo.replace(/\D/g, '').length !== 12) {
+    alert('Título de eleitor inválido. Deve conter 12 dígitos.');
+    return;
+  }
+
+  setErrors([]);
+  setIsSubmitting(true);
+
+  try {
+    // monta o payload
+    const payload = {
+      nomeCompleto: form.nome,
+      cpf: form.cpf,
+      titulo: form.titulo,
+      telefoneContato: form.telefone,
+      email: form.email,
+      cep: form.cep,
+      endereco: form.endereco,
+      num: form.numero,
+      bairro: form.bairro,
+      zona: form.zona,
+      pontoReferencia: form.pontoReferencia,
+      secaoEleitoral: form.secao,
+      senha: form.senha,
+      indicadoPor: form.indicadoPor || undefined,
+      meio: form.meio || undefined,
+      zonaEleitoral: form.zonaEleitoral || undefined,
+      observacoes: form.observacoes || undefined,
+      liderNome: form.liderNome || undefined,
+      // se precisar enviar o id também:
+      // liderId: form.liderId ? Number(form.liderId) : undefined,
+    };
+
+    const res = await registrarSolicitante(payload);
+
+    // >>> AQUI está a diferença principal <<<
+    if (!res || res.ok === false) {
+      const msg = res?.error || 'Erro ao salvar solicitante.';
+      alert(msg);
+      return; // não navega
     }
 
-    if (!isValidCPF(form.cpf)) {
-      alert('CPF inválido.');
-      return;
-    }
+    // sucesso
+    window.location.href = '/dashboard';
+  } catch (e) {
+    // exceções fora do fluxo (ex.: rede interrompida)
+    alert('Erro inesperado ao enviar. Tente novamente.');
+    console.error(e);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
-    if (form.titulo.replace(/\D/g, '').length !== 12) {
-      alert('Título de eleitor inválido. Deve conter 12 dígitos.');
-      return;
-    }
-
-    setErrors([]);
-
-    try {
-      await registrarSolicitante({
-        nomeCompleto: form.nome,
-        cpf: form.cpf,
-        titulo: form.titulo,
-        telefoneContato: form.telefone,
-        email: form.email,
-        cep: form.cep,
-        endereco: form.endereco,
-        num: form.numero,
-        bairro: form.bairro,
-        zona: form.zona,
-        pontoReferencia: form.pontoReferencia,
-        secaoEleitoral: form.secao,
-        senha: form.senha,
-        indicadoPor: form.indicadoPor,
-        meio: form.meio,
-        zonaEleitoral: form.zonaEleitoral,
-        observacoes: form.observacoes,
-        liderNome: form.liderNome,
-      });
-
-
-      window.location.href = "/dashboard";
-    } catch (err) {
-      alert(err instanceof Error ? `Erro: ${err.message}` : 'Erro desconhecido ao salvar solicitante.');
-    }
-  };
 
   const isError = (campo: string) => errors.includes(campo);
 
@@ -506,4 +585,5 @@ export default function RegistroPage() {
     </div>
   );
 }
+
 
