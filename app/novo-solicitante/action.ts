@@ -13,11 +13,22 @@
 import * as Register from '../../core/Register'
 import type { SolicitanteData } from '../../core/Register'
 
+// Tipos auxiliares
 type MaybePrismaError = {
   code?: string
   meta?: Record<string, unknown>
   message?: string
   name?: string
+}
+
+export type ActionResult<T = unknown> =
+  | { ok: true; data: T }
+  | { ok: false; error: string }
+
+type CoreEnvelope<T = unknown> = { ok: boolean; error?: string; data?: T }
+
+function isCoreEnvelope<T = unknown>(x: unknown): x is CoreEnvelope<T> {
+  return !!x && typeof x === 'object' && 'ok' in (x as any) && typeof (x as any).ok === 'boolean'
 }
 
 const SHOW_DETAILS =
@@ -26,7 +37,6 @@ const SHOW_DETAILS =
 function mapPrismaError(err: unknown): string {
   const e = err as MaybePrismaError
 
-  // Prisma Known
   switch (e?.code) {
     case 'P2002':
       return 'Já existe um cadastro com este CPF/E-mail.'
@@ -39,7 +49,6 @@ function mapPrismaError(err: unknown): string {
       return 'Registro não encontrado para atualizar.'
   }
 
-  // Prisma Validation / Unknown (sem code, mas com name)
   if (e?.name === 'PrismaClientValidationError') {
     return SHOW_DETAILS
       ? `Validação do Prisma falhou: ${e.message ?? ''}`
@@ -51,46 +60,35 @@ function mapPrismaError(err: unknown): string {
       : 'Falha ao executar a operação no banco.'
   }
 
-  // Qualquer outro erro: use a message se existir, senão genérico
   if (e?.message) {
     return SHOW_DETAILS ? e.message : 'Erro interno ao salvar solicitante.'
   }
-
   return 'Erro interno ao salvar solicitante.'
 }
 
-export async function registrarSolicitante(data: SolicitanteData) {
+export async function registrarSolicitante(
+  data: SolicitanteData
+): Promise<ActionResult<any>> {
   try {
     const result = await Register.registrarSolicitante(data)
 
-    // Se o core retornar um envelope de erro, respeite-o
-    if (result && typeof result === 'object' && 'ok' in result) {
-      // @ts-expect-error checagem em runtime
-      if (result.ok === false) {
-        // @ts-expect-error checagem em runtime
-        const msg = result.error || 'Falha ao salvar solicitante.'
-        return { ok: false, error: String(msg) }
+    // Se o core retornar envelope { ok, error, data }, respeite
+    if (isCoreEnvelope(result)) {
+      if (!result.ok) {
+        return { ok: false, error: result.error ?? 'Falha ao salvar solicitante.' }
       }
-      // sucesso envelopado
-      return { ok: true, data: result.data ?? result }
+      return { ok: true, data: result.data }
     }
 
-    // sucesso “cru”
+    // Caso o core retorne “cru” (ex.: registro criado)
     return { ok: true, data: result }
   } catch (err) {
     console.error('Erro ao registrar solicitante:', err)
     const msg = mapPrismaError(err)
-
-    // Em dev, opcionalmente anexe pequenas dicas
-    if (SHOW_DETAILS && (err as any)?.meta) {
-      const meta = (err as any).meta
-      if (meta?.column_name && !msg.includes(String(meta.column_name))) {
-        return { ok: false, error: `${msg} [coluna: ${String(meta.column_name)}]` }
-      }
-    }
     return { ok: false, error: msg }
   }
 }
+
 
 
 
