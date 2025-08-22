@@ -302,10 +302,10 @@ const handleSubmit = async () => {
 
     const res = await registrarSolicitante(payload);
 
-    if (!res || res.ok === false) {
-      alert(res?.error || 'Erro ao salvar solicitante.');
-      return;
-    }
+    if (!res.ok) {
+  alert(res.error)
+  return
+}
 
     window.location.href = '/dashboard';
   } catch (e) {
@@ -577,6 +577,7 @@ const handleSubmit = async () => {
     </div>
   );
 }
+
 
 
 
