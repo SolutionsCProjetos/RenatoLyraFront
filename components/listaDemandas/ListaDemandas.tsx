@@ -301,7 +301,7 @@ function formatarDataParaExibicao(dataISO: string) {
                 <td className="px-4 py-3 text-gray-700">{StatusDemandaEnum[item.status] || item.status}</td>
                 <td className="px-4 py-3 text-gray-700">{item.protocolo}</td>
                 <td className="px-4 py-3 text-gray-800 font-medium">{item.solicitantes?.nomeCompleto || '-'}</td>
-                <td className="px-4 py-3 text-gray-800 font-medium">{item.solicitantes?.indicadoPor || item.solicitantes?.solicitante || '-'}</td>
+                <td className="px-4 py-3 text-gray-800 font-medium">{item.indicadoPor || item.solicitantes?.solicitante || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.solicitantes?.telefoneContato || '-'}</td>
                 <td className="px-4 py-3 text-gray-700">{item.prioridade}</td>
                 <td className="px-4 py-3 text-gray-700">{item.setor}</td>
@@ -356,4 +356,5 @@ function formatarDataParaExibicao(dataISO: string) {
     </div>
   )
 }
+
 
