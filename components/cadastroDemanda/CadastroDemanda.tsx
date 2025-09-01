@@ -336,7 +336,14 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
   return (
     <div className="min-h-screen flex justify-center items-center bg-[#b5e4f1] px-4 py-10">
       <div className="bg-white w-full max-w-6xl p-6 rounded-xl shadow-lg">
-        <h2 className="text-xl font-bold text-[#007cb2] border-b border-black pb-1 mb-6">Demanda</h2>
+       <div className="flex justify-between items-center border-b border-black pb-1 mb-6">
+          <h2 className="text-xl font-bold text-[#007cb2]">Demanda</h2>
+          {form.protocolo && (
+            <span className="text-gray-700 font-medium">
+              Protocolo: <span className="text-[#007cb2]">{form.protocolo}</span>
+            </span>
+          )}
+        </div>
 
         <div className="mb-8">
           <h3 className="font-semibold mb-3">Dados da Demanda</h3>
@@ -485,4 +492,5 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     </div>
   )
 }
+
 
