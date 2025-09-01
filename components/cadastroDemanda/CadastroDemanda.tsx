@@ -215,34 +215,71 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
   }
 
   // Submissão do formulário
-  const handleSubmit = async () => {
+  // const handleSubmit = async () => {
+  //   try {
+  //     const protocolo = await getProximoProtocolo(token)
+  //     const payload = {
+  //       ...form,
+  //       protocolo,
+  //       id: editData?.id || null,
+  //       dataSolicitacao: form.dataSolicitacao ? `${form.dataSolicitacao}T00:00:00` : null,
+  //       dataTermino: form.dataTermino ? `${form.dataTermino}T00:00:00` : null,
+  //       status: form.status === 'Aguardando Retorno'
+  //         ? 'Aguardando_Retorno'
+  //         : form.status === 'Concluída'
+  //           ? 'Conclu_da'
+  //           : form.status,
+  //     }
+
+  //     await registrarDemanda(payload, token, isAdmin)
+
+  //     if (onDemandaCadastrada) {
+  //       await onDemandaCadastrada()
+  //     }
+
+  //     setShowCreateForm(false)
+  //   } catch (error) {
+  //     console.error('Erro ao registrar a demanda:', error)
+  //     alert('Erro ao registrar a demanda.')
+  //   }
+  // }
+
+   const handleSubmit = async () => {
     try {
-      const protocolo = await getProximoProtocolo(token)
+      let protocolo = form.protocolo;
+
+      // Só gera um novo protocolo se for criação
+      if (!editData && !form.protocolo) {
+        protocolo = await getProximoProtocolo(token);
+      }
+
+
       const payload = {
         ...form,
         protocolo,
         id: editData?.id || null,
         dataSolicitacao: form.dataSolicitacao ? `${form.dataSolicitacao}T00:00:00` : null,
         dataTermino: form.dataTermino ? `${form.dataTermino}T00:00:00` : null,
-        status: form.status === 'Aguardando Retorno'
-          ? 'Aguardando_Retorno'
-          : form.status === 'Concluída'
-            ? 'Conclu_da'
-            : form.status,
-      }
+        status:
+          form.status === 'Aguardando Retorno'
+            ? 'Aguardando_Retorno'
+            : form.status === 'Concluída'
+              ? 'Conclu_da'
+              : form.status,
+      };
 
-      await registrarDemanda(payload, token, isAdmin)
+      await registrarDemanda(payload, token, isAdmin);
 
       if (onDemandaCadastrada) {
-        await onDemandaCadastrada()
+        await onDemandaCadastrada();
       }
 
-      setShowCreateForm(false)
+      setShowCreateForm(false);
     } catch (error) {
-      console.error('Erro ao registrar a demanda:', error)
-      alert('Erro ao registrar a demanda.')
+      console.error('Erro ao registrar a demanda:', error);
+      alert('Erro ao registrar a demanda.');
     }
-  }
+  };
 
   // Componente de select reutilizável
   const renderSelect = (
@@ -448,3 +485,4 @@ export default function NovaDemandaPage({ setShowCreateForm, editData, onDemanda
     </div>
   )
 }
+
